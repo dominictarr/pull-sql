@@ -1,0 +1,19 @@
+{
+  "name": "group-by",
+  "description": "",
+  "version": "0.0.0",
+  "homepage": "https://github.com/dominictarr/group-by",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dominictarr/group-by.git"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "test": "set -e; for t in test/*.js; do node $t; done"
+  },
+  "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
+  "license": "MIT"  
+}
