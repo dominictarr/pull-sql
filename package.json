@@ -1,19 +1,22 @@
 {
-  "name": "group-by",
-  "description": "",
+  "name": "pull-sql",
+  "description": "sql-like pull-stream",
   "version": "0.0.0",
-  "homepage": "https://github.com/dominictarr/group-by",
+  "homepage": "https://github.com/dominictarr/pull-sql",
   "repository": {
     "type": "git",
-    "url": "git://github.com/dominictarr/group-by.git"
+    "url": "git://github.com/dominictarr/pull-sql.git"
   },
   "dependencies": {
+    "pull-stream": "~2.24.1",
+    "pull-through": "~1.0.12"
   },
   "devDependencies": {
+    "tape": "~2.14.0"
   },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
   },
   "author": "Dominic Tarr <dominic.tarr@gmail.com> (http://dominictarr.com)",
-  "license": "MIT"  
+  "license": "MIT"
 }

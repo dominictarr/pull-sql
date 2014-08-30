@@ -1,83 +1,53 @@
 
+var pull = require('pull-stream')
 
-//QueryStream('count(foo), sum(baz) group by blah')
+var util = require('./util')
+var groupBy = require('./group')
 
-function createReduce () {
-  var rules = [], groups = {}, grouper = function (a) { return a }
+module.exports = function () {
+  var streams = [], piped = false, reducer
 
-  var first = true
-  function reduce (a, b) {
-
-    if(first && a != null) {
-      first = false
-      a = reduce(null, a)
-    }
-
-    if(!a) a = {}
-    var group = grouper(a, b)
-    if(group) {
-
-      for(var i in rules)
-        rules[i](group, b)
-
-    }
-
-//    console.log(group)
-    return a
+  function query (read) {
+    if(piped) throw new Error('query-stream has already been read')
+    piped = true
+    return pull.apply(null, [read].concat(streams))
   }
 
-  reduce.count = function (name, as) {
-    if(name === true) {
-      as = as || 'count'
-      rules.push(function (a, b) {
-        a[as] = (a[as] || 0) + 1
-      })
-    }
-    else {
-      as = as || name
-      rules.push(function (a, b) {
-        if(b[name])
-          a[as] = (a[as] || 0) + 1
-      })
-    }
-
-    return reduce
+  query.push = function (stream) {
+    streams.push(stream)
+    return query
   }
 
-  reduce.sum = function (name, as) {
-    as = as || name
-    rules.push(function (a, b) {
-      if(b[name] && !isNaN(b[name]))
-        a[as] = (a[as] || 0) + +b[name]
-    })
-
-    return reduce
-  }
-
-  reduce.groupBy = function (name) {
-    grouper = function (a, b) {
-      if(b[name]) {
-        var gname = b[name]
-        return a[gname] = (a[gname] || {})
+  function add(fun, map) {
+    return function (opts) {
+      if(reducer) {
+        reducer = null
       }
+      return query.push(map(fun(opts)))
     }
-
-    return reduce
+    return query
   }
 
-  return reduce
+  function group(name, flatten) {
+    return function () {
+      var args = [].slice.call(arguments)
+      if(!reducer) {
+        reducer = groupBy()
+        query.push(pull.reduce(reducer))
+        if(flatten)
+          query.push(pull.flatten())
+      }
+      reducer[name].apply(reducer, args)
+      return query
+    }
+  }
 
+  query.map    = query.select = add(util.map, pull.map)
+  query.where  = query.filter = add(util.filter, pull.filter)
+  query.group  = group('groupBy', true)
+  query.sum    = group('sum')
+  query.avg    = group('avg')
+  query.sort   = query.order = add(util.compare, util.sort)
+  return query
 }
 
-module.exports = createReduce
-
-//example.
-/*
-var reduce =
-  createReduce()
-    .count('count')
-    .sum('foo')
-    .average('baz')
-    .groupBy('blah')
-
-*/

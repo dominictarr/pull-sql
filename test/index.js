@@ -1,6 +1,6 @@
 
 var tape = require('tape')
-var group = require('../')
+var group = require('../group')
 
 
 var data = [
@@ -25,8 +25,8 @@ tape('count, sum, groupBy', function (t) {
   t.deepEqual(
     groups,
     {
-      bar: {count: 3, value: 7},
-      baz: {count: 3, value: 14}
+      bar: {foo: 'bar', count: 3, value: 7},
+      baz: {foo: 'baz', count: 3, value: 14}
     }
   )
 
@@ -52,8 +52,8 @@ tape('count, sum, groupBy - with as', function (t) {
   t.deepEqual(
     groups,
     {
-      bar: {items: 3, sum: 7},
-      baz: {items: 3, sum: 14}
+      bar: {foo: 'bar', items: 3, sum: 7},
+      baz: {foo: 'baz', items: 3, sum: 14}
     }
   )
 
