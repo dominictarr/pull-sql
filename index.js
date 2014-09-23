@@ -45,6 +45,7 @@ module.exports = function () {
   query.map    = query.select = add(util.map, pull.map)
   query.where  = query.filter = add(util.filter, pull.filter)
   query.group  = group('groupBy', true)
+  query.count  = group('count')
   query.sum    = group('sum')
   query.avg    = group('avg')
   query.sort   = query.order = add(util.compare, util.sort)
