@@ -50,3 +50,21 @@ foobarbaz(
   }
 )
 
+foobarbaz(
+  sql().count('foo'),
+  function (err, ary) {
+    this.deepEqual(ary, [{foo: 5}])
+    this.end()
+  }
+)
+
+foobarbaz(
+  sql()
+    .count('foo')
+    .group('bar')
+  ,
+  function (err, ary) {
+    this.deepEqual(ary, [{a: {bar: 'a', foo: 3}, b: {bar: 'b', foo: 2}}])
+    this.end()
+  }
+)
